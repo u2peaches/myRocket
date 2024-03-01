@@ -68,7 +68,7 @@ EventLoop* IOThread::getEventLoop() {
   return m_event_loop;
 }
 
-//
+//  开始该IO线程的loop循环
 void IOThread::start() {
   DEBUGLOG("Now invoke IOThread %d", m_thread_id);
   sem_post(&m_start_semaphore);

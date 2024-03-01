@@ -82,12 +82,13 @@ void EventLoop::initTimer() {
   addEpollEvent(m_timer);
 }
 
+//  添加定时事件
 void EventLoop::addTimerEvent(TimerEvent::s_ptr event) {
   m_timer->addTimerEvent(event);
 }
 
 void EventLoop::initWakeUpFdEevent() {
-  m_wakeup_fd = eventfd(0, EFD_NONBLOCK);
+  m_wakeup_fd = eventfd(0, EFD_NONBLOCK); //  计数器，当作一个fd
   if (m_wakeup_fd < 0) {
     ERRORLOG("failed to create event loop, eventfd create error, error info[%d]", errno);
     exit(0);
@@ -96,6 +97,7 @@ void EventLoop::initWakeUpFdEevent() {
 
   m_wakeup_fd_event = new WakeUpFdEvent(m_wakeup_fd);
 
+  //  将其就绪函数为把缓冲区读完
   m_wakeup_fd_event->listen(FdEvent::IN_EVENT, [this]() {
     char buf[8];
     while(read(m_wakeup_fd, buf, 8) != -1 && errno != EAGAIN) {
@@ -116,6 +118,7 @@ void EventLoop::loop() {
     m_pending_tasks.swap(tmp_tasks); 
     lock.unlock();
 
+    //  此处执行事物函数，包括
     while (!tmp_tasks.empty()) {
       std::function<void()> cb = tmp_tasks.front();
       tmp_tasks.pop();
@@ -138,8 +141,8 @@ void EventLoop::loop() {
       ERRORLOG("epoll_wait error, errno=%d, error=%s", errno, strerror(errno));
     } else {
       for (int i = 0; i < rt; ++i) {
-        epoll_event trigger_event = result_events[i];
-        FdEvent* fd_event = static_cast<FdEvent*>(trigger_event.data.ptr);
+        epoll_event trigger_event = result_events[i]; //  获取就绪事件
+        FdEvent* fd_event = static_cast<FdEvent*>(trigger_event.data.ptr);  //  将事件转换为FdEvent类型，因为在添加的时候void*ptr就是传的FdEvent类型的数据
         if (fd_event == NULL) {
           ERRORLOG("fd_event = NULL, continue");
           continue;
@@ -148,14 +151,15 @@ void EventLoop::loop() {
         // int event = (int)(trigger_event.events); 
         // DEBUGLOG("unkonow event = %d", event);
 
+        //  以下三个判断是判断当前事件是因为哪种行为触发的就绪事件，该项目只涉及到以下三种事件触发状态
         if (trigger_event.events & EPOLLIN) { 
 
           // DEBUGLOG("fd %d trigger EPOLLIN event", fd_event->getFd())
-          addTask(fd_event->handler(FdEvent::IN_EVENT));
+          addTask(fd_event->handler(FdEvent::IN_EVENT));  //  将对应IN_EVENT的处理函数加入Task中，到时候只需要执行
         }
         if (trigger_event.events & EPOLLOUT) { 
           // DEBUGLOG("fd %d trigger EPOLLOUT event", fd_event->getFd())
-          addTask(fd_event->handler(FdEvent::OUT_EVENT));
+          addTask(fd_event->handler(FdEvent::OUT_EVENT)); //  将对应OUT_EVENT的处理函数加入Task中，到时候只需要执行
         }
 
         // EPOLLHUP EPOLLERR
@@ -165,7 +169,7 @@ void EventLoop::loop() {
           deleteEpollEvent(fd_event);
           if (fd_event->handler(FdEvent::ERROR_EVENT) != nullptr) {
             DEBUGLOG("fd %d add error callback", fd_event->getFd())
-            addTask(fd_event->handler(FdEvent::OUT_EVENT));
+            addTask(fd_event->handler(FdEvent::OUT_EVENT)); //  若有处理函数则将对应ERROR_EVENT的处理函数加入Task中，到时候只需要执行
           }
         }
       }
@@ -190,9 +194,10 @@ void EventLoop::dealWakeup() {
 }
 
 void EventLoop::addEpollEvent(FdEvent* event) {
+  //  主Loop线程用于加入任务监听，当任务出现的时候，主Loop线程去获取一个子IO线程处理该IO时间
   if (isInLoopThread()) {
     ADD_TO_EPOLL();
-  } else {
+  } else {  //  子Loop线程直接将任务添加进任务中运行。并且直接唤醒loop执行，这里没太懂
     auto cb = [this, event]() {
       ADD_TO_EPOLL();
     };
@@ -229,6 +234,7 @@ bool EventLoop::isInLoopThread() {
 }
 
 
+//  获取当前EventLoop循环的对象，如果没有的话会进行构造，作为一个静态函数
 EventLoop* EventLoop::GetCurrentEventLoop() {
   if (t_current_eventloop) {
     return t_current_eventloop;

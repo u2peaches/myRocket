@@ -49,7 +49,7 @@ int TcpAcceptor::getListenFd() {
   return m_listenfd;
 }
 
-
+//  构造一个client_addr，获取一个TCP连接
 std::pair<int, NetAddr::s_ptr> TcpAcceptor::accept() {
   if (m_family == AF_INET) {
     sockaddr_in client_addr;

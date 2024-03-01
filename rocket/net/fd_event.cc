@@ -47,7 +47,6 @@ void FdEvent::listen(TriggerEvent event_type, std::function<void()> callback, st
   } else {
     m_error_callback = nullptr;
   }
-
   m_listen_events.data.ptr = this;
 }
 

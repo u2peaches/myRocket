@@ -72,7 +72,7 @@ void test_io_thread() {
   rocket::IOThreadGroup io_thread_group(2);
   rocket::IOThread* io_thread = io_thread_group.getIOThread();
   // io_thread->getEventLoop()->addEpollEvent(&event);
-  io_thread->getEventLoop()->addTimerEvent(timer_event);
+  io_thread->getEventLoop()->addTimerEvent(timer_event);  //  此处的定时任务的可读就绪事件会由内核来进行，每次到达我们设定的时间，内核会像timer_event对应的fd写入内容，因此就会可读，导致主loop循环监听到，最后执行回调函数
 
   rocket::IOThread* io_thread2 = io_thread_group.getIOThread();
   io_thread2->getEventLoop()->addTimerEvent(timer_event);

@@ -8,7 +8,7 @@ namespace rocket {
 
 class TcpAcceptor {
  public:
-  typedef std::shared_ptr<TcpAcceptor> s_ptr;
+  typedef std::shared_ptr<TcpAcceptor> s_ptr; //使用new的指针会容易忘记析构
 
   TcpAcceptor(NetAddr::s_ptr local_addr);   //  构造对象
 

@@ -6,6 +6,8 @@
 #include <sys/epoll.h>
 
 namespace rocket {
+
+
 class FdEvent {
  public:
   enum TriggerEvent {
@@ -20,21 +22,21 @@ class FdEvent {
 
   ~FdEvent();
 
-  void setNonBlock();
+  void setNonBlock(); //  设置m_fd类型是非阻塞的
 
   std::function<void()> handler(TriggerEvent event_type);
 
-  void listen(TriggerEvent event_type, std::function<void()> callback, std::function<void()> error_callback = nullptr);
+  void listen(TriggerEvent event_type, std::function<void()> callback, std::function<void()> error_callback = nullptr); //  对m_listen_event进行信号的绑定，同时赋值回调函数
 
   // 取消监听
-  void cancle(TriggerEvent event_type);
+  void cancle(TriggerEvent event_type); //  取消监听对应类型的事件
 
   int getFd() const {
     return m_fd;
   }
 
   epoll_event getEpollEvent() {
-    return m_listen_events;
+    return m_listen_events; //  处理好的事件会被用来存进内核事件表中，用于后续的epoll_wait，m_listen_events
   }
 
 

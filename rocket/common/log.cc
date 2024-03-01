@@ -19,7 +19,7 @@ Logger* Logger::GetGlobalLogger(){
 
 void Logger::InitGlobalLogger(){
     LogLevel global_log_level = StringToLogLevel(Config::GetGlobalConfig()->m_log_level);
-    printf("init log level [%s]\n", LogLevelToString(global_log_level).c_str());
+    // printf("init log level [%s]\n", LogLevelToString(global_log_level).c_str());
     g_logger = new Logger(global_log_level);
 }
 

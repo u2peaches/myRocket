@@ -25,7 +25,7 @@ class Timer : public FdEvent {
   void resetArriveTime();
 
  private:
-  std::multimap<int64_t, TimerEvent::s_ptr> m_pending_events;
+  std::multimap<int64_t, TimerEvent::s_ptr> m_pending_events; //  存储的定时任务
   Mutex m_mutex;
 
 };

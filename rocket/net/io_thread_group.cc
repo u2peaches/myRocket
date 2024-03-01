@@ -17,6 +17,7 @@ IOThreadGroup::~IOThreadGroup() {
 
 }
 
+//  将每个线程组里的IO线程开启它们的Loop循环
 void IOThreadGroup::start() {
   for (size_t i = 0; i < m_io_thread_groups.size(); ++i) {
     m_io_thread_groups[i]->start();
