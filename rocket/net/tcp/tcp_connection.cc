@@ -16,7 +16,7 @@ TcpConnection::TcpConnection(EventLoop* event_loop, int fd, int buffer_size, Net
   m_fd_event = FdEventGroup::GetFdEventGroup()->getFdEvent(fd); //  获取到fd_event对象
   m_fd_event->setNonBlock();  //设置成非阻塞
 
-  m_coder = new TinyPBCoder();
+  m_coder = new TinyPBCoder();  //  实现Protobuf序列化编解码的coder
 
   if (m_connection_type == TcpConnectionByServer) {
     listenRead();   //  每个connection会有自己的m_fd_event，此处将read函数绑定在该m_fd_event上，加入loop监听中

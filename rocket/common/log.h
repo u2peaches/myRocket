@@ -37,7 +37,7 @@ std::string formatString(const char* str, Args&&... args){
 
 #define ERRORLOG(str, ...)\
     if(rocket::Logger::GetGlobalLogger()->getLogLevel() <= rocket::Error){  \
-        rocket::Logger::GetGlobalLogger()->pushLog(rocket::LogEvent(rocket::LogLevel::Error).toString()->toString()  \
+        rocket::Logger::GetGlobalLogger()->pushLog(rocket::LogEvent(rocket::LogLevel::Error).toString()  \
          + "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]\t" + rocket::formatString(str, ##__VA_ARGS__) + "\n"); \
         rocket::Logger::GetGlobalLogger()->log();   \
     }
