@@ -53,7 +53,7 @@ void* IOThread::Main(void* arg) {
 
   DEBUGLOG("IOThread %d created, wait start semaphore", thread->m_thread_id);
 
-  sem_wait(&thread->m_start_semaphore); //  为了让loop变得更加可控，可能会希望在loop循环进入前我们能够事先往其中加入FdEvent
+  sem_wait(&thread->m_start_semaphore); //  为了让loop变得更加可控，可能会希望在loop循环进入前我们能够事先往其中加入FdEvent，我们能够控制其loop的运行
   DEBUGLOG("IOThread %d start loop ", thread->m_thread_id);
   thread->m_event_loop->loop();
 

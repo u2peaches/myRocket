@@ -18,7 +18,7 @@ void TinyPBCoder::encode(std::vector<AbstractProtocol::s_ptr>& messages, TcpBuff
       out_buffer->writeToBuffer(buf, len);
     }
     if (buf) {
-      free((void*)buf);
+      free((void*)buf); //  释放掉内存，通过malloc申请的
       buf = NULL;
     }
 
@@ -148,11 +148,12 @@ const char* TinyPBCoder::encodeTinyPB(std::shared_ptr<TinyPBProtocol> message, i
     message->m_msg_id = "123456789";
   }
   DEBUGLOG("msg_id = %s", message->m_msg_id.c_str());
+  
   int pk_len = 2 + 24 + message->m_msg_id.length() + message->m_method_name.length() + message->m_err_info.length() + message->m_pb_data.length();
   DEBUGLOG("pk_len = %", pk_len);
 
-  char* buf = reinterpret_cast<char*>(malloc(pk_len));
-  char* tmp = buf;
+  char* buf = reinterpret_cast<char*>(malloc(pk_len));  //  申请一段内存空间
+  char* tmp = buf;  //  tmp移动指针，用于给buf对应位置赋值对应的值
 
   *tmp = TinyPBProtocol::PB_START;
   tmp++;
@@ -206,12 +207,13 @@ const char* TinyPBCoder::encodeTinyPB(std::shared_ptr<TinyPBProtocol> message, i
 
   *tmp = TinyPBProtocol::PB_END;
 
+    //  修改原内容
   message->m_pk_len = pk_len;
   message->m_msg_id_len = msg_id_len;
   message->m_method_name_len = method_name_len;
   message->m_err_info_len = err_info_len;
   message->parse_success = true;
-  len = pk_len;
+  len = pk_len; //  返回长度，传递的是引用
 
   DEBUGLOG("encode message[%s] success", message->m_msg_id.c_str());
 

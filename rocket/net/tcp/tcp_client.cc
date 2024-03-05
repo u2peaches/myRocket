@@ -138,6 +138,8 @@ NetAddr::s_ptr TcpClient::getLocalAddr() {
   return m_local_addr;
 }
 
+
+//  通过m_fd获取其存储的local_addr
 void TcpClient::initLocalAddr() {
   sockaddr_in local_addr;
   socklen_t len = sizeof(local_addr);

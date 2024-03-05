@@ -84,6 +84,7 @@ void RpcDispatcher::dispatch(AbstractProtocol::s_ptr request, AbstractProtocol::
   rpc_controller->SetPeerAddr(connection->getPeerAddr());
   rpc_controller->SetMsgId(req_protocol->m_msg_id);
 
+  //  设置一些服务的关键信息
   RunTime::GetRunTime()->m_msgid = req_protocol->m_msg_id;
   RunTime::GetRunTime()->m_method_name = method_name;
 
