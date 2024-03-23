@@ -71,7 +71,7 @@ void TcpServer::start() {
   m_main_event_loop->loop();    //  开启主线程的循环
 }
 
-
+//  定时执行定时事件，遍历所有的连接，如果有连接断开了，就执行清理，注销相关事件监听
 void TcpServer::ClearClientTimerFunc() {
   auto it = m_client.begin();
   for (it = m_client.begin(); it != m_client.end(); ) {

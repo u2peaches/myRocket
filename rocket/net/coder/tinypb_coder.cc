@@ -21,7 +21,6 @@ void TinyPBCoder::encode(std::vector<AbstractProtocol::s_ptr>& messages, TcpBuff
       free((void*)buf); //  释放掉内存，通过malloc申请的
       buf = NULL;
     }
-
   }
 }
 
@@ -47,7 +46,7 @@ void TinyPBCoder::decode(std::vector<AbstractProtocol::s_ptr>& out_messages, Tcp
 
           // 结束符的索引
           int j = i + pk_len - 1;
-          if (j >= buffer->writeIndex()) {  //  说明预估的结束符的位置超出了可读数据，说明发生了截断可能在后面的包中，继续往后遍历是否有开始符，如果遇到有的情况下，怎么办？
+          if (j >= buffer->writeIndex()) {  //  说明预估的结束符的位置超出了可读数据，说明发生了截断可能在后面的包中，继续往后遍历是否有开始符，如果遇到有的情况下，怎么办？直接跳出当前的状态，在下一次读取的时候，重新进行读写。
             continue;
           }
           if (tmp[j] == TinyPBProtocol::PB_END) {   //  如果预估结束符正确，表明找到了一个包，记录下在缓冲区中的区间

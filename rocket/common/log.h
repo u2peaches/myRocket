@@ -13,9 +13,22 @@
 namespace rocket {
 
 
+// template<typename... Args>
+// std::string formatString(const char* str, Args&&... args) {
+
+//   int size = snprintf(nullptr, 0, str, args...);
+
+//   std::string result;
+//   if (size > 0) {
+//     result.resize(size);
+//     snprintf(&result[0], size + 1, str, args...);
+//   }
+
+//   return result;
+// }
+
 template<typename... Args>
 std::string formatString(const char* str, Args&&... args) {
-
   int size = snprintf(nullptr, 0, str, args...);
 
   std::string result;
@@ -93,7 +106,6 @@ class AsyncLogger {
   typedef std::shared_ptr<AsyncLogger> s_ptr;
   AsyncLogger(const std::string& file_name, const std::string& file_path, int max_size);
 
-
   void stop();
 
   // 刷新到磁盘
@@ -103,11 +115,11 @@ class AsyncLogger {
 
 
  public:
- // 将buffer里面的全部数据打印到文件中，
+  // 将buffer里面的全部数据打印到文件中，
   static void* Loop(void*);
 
  public:
-  pthread_t m_thread;   //  运行的线程
+  pthread_t m_thread;
 
  private:
   // m_file_path/m_file_name_yyyymmdd.0
@@ -118,7 +130,7 @@ class AsyncLogger {
   std::string m_file_path;    // 日志输出路径
   int m_max_file_size {0};    // 日志单个文件最大大小, 单位为字节
 
-  sem_t m_sempahore;    //  信号量
+  sem_t m_sempahore;
 
   pthread_cond_t m_condtion;  // 条件变量
   Mutex m_mutex;
@@ -171,12 +183,10 @@ class Logger {
 
  private:
   LogLevel m_set_level;
-  std::vector<std::string> m_buffer;  //  存储应用层的buffer
+  std::vector<std::string> m_buffer;    //  存储应用层的buffer
 
   std::vector<std::string> m_app_buffer;  //  业务逻辑的buffer
 
-
-  //  两个锁
   Mutex m_mutex;
 
   Mutex m_app_mutex;
@@ -187,13 +197,13 @@ class Logger {
   std::string m_file_path;    // 日志输出路径
   int m_max_file_size {0};    // 日志单个文件最大大小
 
-  AsyncLogger::s_ptr m_asnyc_logger;  //  异步的应用层logger
+  AsyncLogger::s_ptr m_asnyc_logger;
 
-  AsyncLogger::s_ptr m_asnyc_app_logger;  //  异步的applogger
+  AsyncLogger::s_ptr m_asnyc_app_logger;
 
   TimerEvent::s_ptr m_timer_event;
 
-  int m_type {0}; //  表明是1的话表示异步日志，如果是2的话表示同步日志
+  int m_type {0};
 
 };
 

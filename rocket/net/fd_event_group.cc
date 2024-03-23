@@ -23,6 +23,7 @@ FdEventGroup::FdEventGroup(int size) :m_size(size) {
   }
 }
 
+
 FdEventGroup::~FdEventGroup() {
   for (int i = 0; i < m_size; ++i) {
     if (m_fd_group[i] != NULL) {
@@ -32,6 +33,7 @@ FdEventGroup::~FdEventGroup() {
   }
 }
 
+//  获取一个事件，通过一个事件组来进行管理，如果事件数超过了已有的设置的上限，则进行扩容
 FdEvent* FdEventGroup::getFdEvent(int fd) {
   ScopeMutex<Mutex> lock(m_mutex);
   if ((size_t) fd < m_fd_group.size()) {

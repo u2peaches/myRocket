@@ -1,0 +1,34 @@
+syntax = "proto3";
+option cc_generic_services = true;
+
+message makeOrderRequest {
+  int32 price = 1;
+  string goods = 2;
+}
+
+message makeOrderResponse {
+  int32 ret_code = 1;
+  string res_info = 2;
+  string order_id = 3;
+}
+
+message queryOrderRequest {
+  string order_id = 1;
+}
+
+message queryOrderResponse {
+  int32 ret_code = 1;
+  string res_info = 2;
+  string order_id = 3;
+  int32 price = 4;
+  string goods = 5;
+}
+
+service StudentService {
+  //  rpc method name
+  rpc add_student(makeOrderRequest) returns (makeOrderResponse);
+
+  //  rpc method name
+  rpc query_order(queryOrderRequest) returns (queryOrderResponse);
+
+}

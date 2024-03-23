@@ -16,6 +16,7 @@ namespace rocket {
 
 static Logger* g_logger = NULL;
 
+//  中断程序
 void CoredumpHandler(int signal_no) {
   ERRORLOG("progress received invalid signal, will exit");
   g_logger->flush();
@@ -26,6 +27,7 @@ void CoredumpHandler(int signal_no) {
   raise(signal_no);
 }
 
+//  获取GlobalLogger
 Logger* Logger::GetGlobalLogger() {
   return g_logger;
 }
@@ -61,8 +63,10 @@ void Logger::init() {
   if (m_type == 0) {
     return;
   }
+  //  添加定时方法，定时去调用异步loop函数（syncLoop），然后将logger现在存储的数据传递到synlogger以及APPsynlogger
   m_timer_event = std::make_shared<TimerEvent>(Config::GetGlobalConfig()->m_log_sync_inteval, true, std::bind(&Logger::syncLoop, this));
   EventLoop::GetCurrentEventLoop()->addTimerEvent(m_timer_event);
+  //  注册信号函数
   signal(SIGSEGV, CoredumpHandler);
   signal(SIGABRT, CoredumpHandler);
   signal(SIGTERM, CoredumpHandler);
@@ -180,7 +184,7 @@ std::string LogEvent::toString() {
 
 void Logger::pushLog(const std::string& msg) {
   if (m_type == 0) {  //  同步日志则不需要进行异步写入到buffer中，直接打印
-    printf((msg + "\n").c_str());
+    printf("%s\n", msg.c_str());
     return;
   }
   ScopeMutex<Mutex> lock(m_mutex);

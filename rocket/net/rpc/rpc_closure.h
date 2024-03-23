@@ -11,6 +11,8 @@
 
 namespace rocket {
 
+class RpcInterface;
+
 class RpcClosure : public google::protobuf::Closure {
  public:
   typedef std::shared_ptr<RpcInterface> it_s_ptr;

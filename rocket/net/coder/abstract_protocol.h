@@ -1,9 +1,9 @@
-//  通用协议，一个抽象基类
+
 #ifndef ROCKET_NET_ABSTRACT_PROTOCOL_H
 #define ROCKET_NET_ABSTRACT_PROTOCOL_H
-
+//  通用协议，一个抽象基类
 #include <memory>
-
+#include <string>
 
 namespace rocket {
 

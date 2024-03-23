@@ -194,7 +194,7 @@ void EventLoop::dealWakeup() {
 }
 
 void EventLoop::addEpollEvent(FdEvent* event) {
-  //  主Loop线程用于加入任务监听，当任务出现的时候，主Loop线程去获取一个子IO线程处理该IO时间
+  //  主Loop线程用于加入任务监听，当任务出现的时候，主Loop线程去获取一个子IO线程处理该IO事件
   if (isInLoopThread()) {
     ADD_TO_EPOLL();
   } else {  //  子Loop线程直接将任务添加进任务中运行。并且直接唤醒loop执行，这里没太懂
